@@ -131,3 +131,38 @@ def grammar_hints(text: str) -> list:
     except Exception as e:
         print("Grammar check error:", e)
     return hints[:6]
+
+
+# ---------- 3. Slang protector ----------
+# If the AI "corrects" your slang (u -> you, ur -> your), put your slang back.
+SLANG_EXPANSIONS = {
+    "u": ["you"], "ur": ["your", "you're", "youre", "you are"], "r": ["are"], "ya": ["you"],
+    "pls": ["please"], "plz": ["please"], "thx": ["thanks"], "ty": ["thank you"],
+    "tmrw": ["tomorrow"], "tmr": ["tomorrow"], "idk": ["i don't know", "i dont know"],
+    "omw": ["on my way"], "rn": ["right now"], "bc": ["because"], "cuz": ["because"],
+    "ppl": ["people"], "gonna": ["going to"], "wanna": ["want to"], "gotta": ["got to", "have to"],
+    "tho": ["though"], "nvm": ["never mind", "nevermind"], "btw": ["by the way"], "lmk": ["let me know"],
+    "ngl": ["not gonna lie", "not going to lie"], "tbh": ["to be honest"], "abt": ["about"],
+    "w": ["with"], "wit": ["with"], "k": ["okay", "ok"], "kk": ["okay", "ok"], "yea": ["yeah", "yes"],
+}
+
+
+def keep_slang(original: str, fixed: str, changes: list) -> str:
+    """If you typed "u" (and never "you"), any "you" the AI added goes back to "u". Same for ur, tmrw, etc."""
+    orig_low = original.lower()
+    has = lambda phrase, text: re.search(r"(?<![\w'])" + re.escape(phrase) + r"(?![\w'])", text, re.I)
+    # longest slang first so "ur" is handled before "u"
+    for slang in sorted(SLANG_EXPANSIONS, key=len, reverse=True):
+        m = has(slang, original)
+        if not m:
+            continue
+        typed = m.group(0)  # exactly how you typed it
+        for exp in sorted(SLANG_EXPANSIONS[slang], key=len, reverse=True):
+            if has(exp, orig_low):
+                continue  # you typed the full word yourself somewhere, so leave it alone
+            fixed = re.sub(r"(?<![\w'])" + re.escape(exp).replace(r"\ ", r"\s+") + r"(?![\w'])",
+                           lambda _: typed, fixed, flags=re.I)
+    # drop the AI's "u -> you" style notes, since we undid them
+    changes[:] = [c for c in changes
+                  if not re.match(r'\s*"(' + "|".join(map(re.escape, SLANG_EXPANSIONS)) + r')"\s*->', c, re.I)]
+    return fixed

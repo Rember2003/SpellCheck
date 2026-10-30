@@ -239,6 +239,7 @@ def ask_model(message: str) -> dict:
     fixed = str(data.get("fixed", message)).strip() or message
     fixed = re.sub(r"^message:\s*", "", fixed, flags=re.I)  # in case the model copies our label
     fixed = apply_listed_changes(fixed, changes)
+    fixed = grammar_db.keep_slang(message, fixed, changes)  # put u/ur/tmrw back if the AI expanded them
     fixed = fix_contractions(fixed, changes)
     fixed = db.fix_learned(fixed, changes)  # typos you've made before
     tone = str(data.get("tone_warning", "")).strip()
