@@ -1,0 +1,5 @@
+gradio
+requests
+pyperclip
+pyspellchecker
+language-tool-python

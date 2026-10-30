@@ -1,0 +1,75 @@
+# Common grammar mistakes -> fix. Fixed instantly, before the AI runs.
+# Format:  wrong phrase -> right phrase     (add your own! one per line)
+
+# "of" instead of "have"
+should of -> should have
+could of -> could have
+would of -> would have
+must of -> must have
+might of -> might have
+shouldnt of -> shouldn't have
+couldnt of -> couldn't have
+wouldnt of -> wouldn't have
+shouldn't of -> shouldn't have
+couldn't of -> couldn't have
+wouldn't of -> wouldn't have
+
+# your / you're
+your welcome -> you're welcome
+your right -> you're right
+your wrong -> you're wrong
+your so -> you're so
+your going to -> you're going to
+your gonna -> you're gonna
+your not -> you're not
+your the best -> you're the best
+your being -> you're being
+your doing great -> you're doing great
+
+# their / there / they're
+their going to -> they're going to
+there going to -> they're going to
+their gonna -> they're gonna
+there gonna -> they're gonna
+their not -> they're not
+their is -> there is
+their are -> there are
+their was -> there was
+their were -> there were
+
+# its / it's
+its a -> it's a
+its been -> it's been
+its not -> it's not
+its going -> it's going
+its gonna -> it's gonna
+its so -> it's so
+its ok -> it's ok
+its okay -> it's okay
+its fine -> it's fine
+its too -> it's too
+
+# then / than
+better then -> better than
+worse then -> worse than
+more then -> more than
+less then -> less than
+rather then -> rather than
+other then -> other than
+bigger then -> bigger than
+smaller then -> smaller than
+faster then -> faster than
+
+# to / too
+to much -> too much
+to many -> too many
+to late -> too late
+to early -> too early
+to bad -> too bad
+
+# other common ones
+suppose to -> supposed to
+supposably -> supposedly
+irregardless -> regardless
+every since -> ever since
+for all intensive purposes -> for all intents and purposes
