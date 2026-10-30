@@ -223,26 +223,65 @@ def check(message: str):
 
     notes = []
     if result["fixed"] == message.strip() and not result["changes"]:
-        notes.append("✅ Looks good, send it!")
+        notes.append("👻 No curses found, send it!")
     else:
-        notes += [f"• {c}" for c in result["changes"]]
+        notes += [f"🦇 {c}" for c in result["changes"]]
     if result["tone_warning"]:
-        notes.append(f"\n🔥 **Tone check:** {result['tone_warning']}")
+        notes.append(f"\n🎃 **Tone check:** {result['tone_warning']}")
 
     return result["fixed"], diff_words(message, result["fixed"]), "\n".join(notes)
 
 
 EXAMPLES = [
-    "im omw be ther in 5 srry traffic is crazzy",
-    "ill duck you up at 6 dont be late",
-    "can u send me the notes from todays class i wasnt their",
-    "fine whatever do what u want",
+    "u should of told me ur coming tmrw, its a long drive and i definately cant pick u up their",
+    "ill duck you up at 6 for the haloween party dont be late",
+    "your welcome lol, their going to love my costume, its better then last year",
+    "fine whatever do what u want, i should of known u wouldnt care",
 ]
+
+WITCH = r"""
+                       /\
+                      /  \           ,-.-.    *
+                     / *  \         ( ^ ^ )
+                    /      \          `-'-'  .
+                   /________\          *
+           _______/__======__\_______
+          '--------------------------'
+              ////  .--------.  \\\\
+             ///   /          \   \\\
+             //   |  (O)  (O)  |   \\
+             //   |  //    //  |   \\
+             //    \    w     /    \\
+              \\    '--------'    //
+                 _.-'   <>   '-._
+                /   \ \    / /   \
+               /     \ \  / /     \   __________________
+              /       \ \/ /       \ |__________________|>>>
+             /_________\  /_________\
+               /\/\/\/\/\/\/\/\/\/\/\
+"""
+
+CSS = """
+.gradio-container {
+    background: radial-gradient(circle at top, #2a0f3d 0%, #12051c 55%, #050208 100%) !important;
+}
+#title h1 { color: #ff8c1a; text-shadow: 0 0 12px #ff6a00, 0 0 28px #8a2be2; font-size: 2.6em; text-align: center; }
+#title p { text-align: center; color: #d9b8ff; }
+#witch { text-align: center; }
+#witch pre { display: inline-block; text-align: left; background: transparent !important; border: none !important; }
+#witch pre, #witch code { color: #c77dff !important; font-size: 12px; line-height: 1.15; background: transparent !important;
+    text-shadow: 0 0 6px #8a2be2; }
+button.primary { background: linear-gradient(90deg, #ff6a00, #8a2be2) !important; border: none !important;
+    box-shadow: 0 0 14px #ff6a0088; font-size: 1.1em !important; }
+button.primary:hover { box-shadow: 0 0 24px #ff8c1a; }
+.block { border-color: #5a2a82 !important; }
+footer { display: none !important; }
+"""
 
 def stats_view():
     st = db.stats()
     summary = (
-        f"### 📊 Your TextCheck stats\n"
+        f"### 📜 Your Spellbook\n"
         f"**{st['checks']}** messages checked · **{st['messages_fixed']}** needed fixing · "
         f"**{st['words_fixed']}** mistakes caught · **{st['tone_warnings']}** tone warnings · "
         f"**{st['learned']}** typos learned · avg **{st['avg_seconds']}s** per check"
@@ -270,27 +309,30 @@ def remove_word(word):
 
 with gr.Blocks(title="TextCheck") as demo:
     gr.Markdown(
-        "# 📱 TextCheck\n"
-        "Type fast. Send right. Catches typos and autocorrect fails, and keeps your vibe. "
-        "Runs locally on open-source **Gemma**, so your texts never leave your laptop."
+        "# 🎃 TextCheck: The Spell-Check Witch 🧙‍♀️\n"
+        "🦇 She casts **spell-check** on your texts. Catches typos, grammar and autocorrect fails, and keeps your vibe. "
+        "Runs locally on open-source **Gemma**, so your texts never leave your laptop. 🦇",
+        elem_id="title",
     )
+    with gr.Accordion("🧙‍♀️ Meet the witch", open=True):
+        gr.Markdown("```\n" + WITCH + "\n```", elem_id="witch")
     with gr.Tabs():
-        with gr.Tab("✏️ Check"):
+        with gr.Tab("🔮 Cast Spell-Check"):
             with gr.Row():
                 with gr.Column():
-                    inp = gr.Textbox(label="Your message", lines=4, placeholder="type ur msg here...")
-                    btn = gr.Button("Check it ✨", variant="primary")
-                    gr.Examples(EXAMPLES, inputs=inp)
+                    inp = gr.Textbox(label="📝 Your cursed message", lines=4, placeholder="type ur msg here... 👻")
+                    btn = gr.Button("🔮 Cast Spell-Check ✨", variant="primary")
+                    gr.Examples(EXAMPLES, inputs=inp, label="🎃 Try a cursed text")
                 with gr.Column():
-                    fixed = gr.Textbox(label="Fixed message (copy this)", lines=4)
+                    fixed = gr.Textbox(label="✨ Un-cursed message (copy this)", lines=4)
                     diff = gr.HighlightedText(
-                        label="What changed",
-                        color_map={"removed": "red", "added": "green"},
+                        label="🦇 What the witch changed",
+                        color_map={"removed": "#ff4d4d", "added": "#7CFC00"},
                         combine_adjacent=True,
                     )
                     notes = gr.Markdown()
 
-        with gr.Tab("📊 My Stats") as stats_tab:
+        with gr.Tab("📜 My Spellbook (Stats)") as stats_tab:
             summary = gr.Markdown()
             gr.Markdown(f"**Your most common mistakes.** After {db.LEARN_AFTER} times, TextCheck fixes them instantly.")
             top = gr.Dataframe(headers=["you typed", "should be", "times"], interactive=False)
@@ -299,7 +341,7 @@ with gr.Blocks(title="TextCheck") as demo:
                                   interactive=False, wrap=True)
             refresh = gr.Button("🔄 Refresh")
 
-        with gr.Tab("📖 My Words") as words_tab:
+        with gr.Tab("🕯️ My Words") as words_tab:
             gr.Markdown("Names, slang, or words you **never** want flagged as mistakes (like your friends' names).")
             word_in = gr.Textbox(label="Word(s)", placeholder="jaylen, finna, bussin")
             with gr.Row():
@@ -317,4 +359,8 @@ with gr.Blocks(title="TextCheck") as demo:
     rm_btn.click(remove_word, inputs=word_in, outputs=[word_in, words_list])
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(
+        css=CSS,
+        theme=gr.themes.Default(primary_hue="orange", secondary_hue="purple"),
+        js="() => { document.body.classList.add('dark'); }",  # spooky dark mode always
+    )
